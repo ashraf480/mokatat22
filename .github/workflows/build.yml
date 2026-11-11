@@ -23,6 +23,15 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      - name: Check signing secrets
+        env:
+          KS: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KS" ]; then
+            echo "::error::KEYSTORE_BASE64 secret is missing. Run the 'Generate keystore' workflow first and add the 4 secrets (see README)."
+            exit 1
+          fi
+
       - name: Install dependencies
         run: npm install
 
@@ -75,6 +84,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.VERSION_NAME }}
-          name: المخطط ${{ env.VERSION_NAME }}
+          name: ط§ظ„ظ…ط®ط·ط· ${{ env.VERSION_NAME }}
           files: Mukhatat-v*.apk
           generate_release_notes: true
