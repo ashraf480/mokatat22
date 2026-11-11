@@ -23,15 +23,6 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Check signing secrets
-        env:
-          KS: ${{ secrets.KEYSTORE_BASE64 }}
-        run: |
-          if [ -z "$KS" ]; then
-            echo "::error::KEYSTORE_BASE64 secret is missing. Run the 'Generate keystore' workflow first and add the 4 secrets (see README)."
-            exit 1
-          fi
-
       - name: Install dependencies
         run: npm install
 
