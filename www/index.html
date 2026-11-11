@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>المخطط</title>
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',Tahoma,sans-serif}
+body{margin:0;min-height:100vh;color:#fff;background:#0f0f1e}
+.bg{position:fixed;inset:0;z-index:0;background:radial-gradient(circle at 20% 10%,#2a1a4d 0%,transparent 40%),radial-gradient(circle at 85% 30%,#1e4d3a 0%,transparent 45%),radial-gradient(circle at 10% 60%,#1e3a2d 0%,transparent 40%),radial-gradient(circle at 80% 75%,#8a5a2b 0%,transparent 45%),#0f0f1e}
+.wrap{position:relative;z-index:1;max-width:560px;margin:auto;padding:16px 14px 40px}
+.page{display:none}.page.active{display:block}
+.top{text-align:center;padding:10px 0 18px}.top h1{font-size:30px;margin:0;line-height:1.3}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;align-items:stretch}
+#grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:14px!important}
+.card{background:rgba(255,255,255,.08);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.55);border-radius:22px;padding:16px 8px;text-align:center;cursor:pointer;min-height:148px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+#grid .card{min-height:172px;padding:20px 10px}
+.card:active{transform:scale(.96)}
+.card .ic{font-size:34px;display:block;line-height:1}
+#grid .card .ic{font-size:42px}
+.card b{font-size:16px;font-weight:800;line-height:1.45;text-wrap:balance;word-break:keep-all}
+#grid .card b{font-size:19px}
+.card small{display:block;font-size:11px;color:#ddd;line-height:1.4}
+.card .pct{font-size:11px;color:#2ee6a8;font-weight:800;line-height:1.4;direction:ltr}
+.back{background:rgba(255,255,255,.15);border:1px solid #fff;color:#fff;padding:10px 18px;border-radius:30px;cursor:pointer;font-size:16px;font-weight:700}
+.inner{background:rgba(10,10,25,.92);border:1px solid rgba(255,255,255,.5);border-radius:22px;padding:22px 18px 18px;margin-top:14px}
+.inner h2{font-size:25px;margin:0 0 24px;padding:0 0 18px;line-height:1.4;text-align:center;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.18)}
+.inner h2 .title-ic{flex-shrink:0;font-size:29px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+.inner h2 .title-txt{flex-shrink:1}
+.inner .grid{margin-top:4px}
+.inner .prog{margin:0 0 12px}
+textarea,input,select{width:100%;background:#1a1a30;color:#fff;border:1px solid #555;border-radius:12px;padding:11px;margin:6px 0}
+textarea{min-height:70px}
+.step{background:#1a1a30;border-right:4px solid #fff;padding:11px;border-radius:10px;margin:7px 0;font-size:14px;line-height:1.7}
+.btn{background:#fff;color:#111;border:0;padding:12px;border-radius:30px;font-weight:800;cursor:pointer;width:100%;margin-top:10px}
+.btnPDF{background:#ff4d6b;color:#fff;border:0;padding:14px 10px;border-radius:30px;cursor:pointer;width:100%;margin-top:14px;font-weight:800;font-size:16px;line-height:1.4;white-space:normal}
+.btnSmall{flex:1;padding:12px;border-radius:20px;cursor:pointer;font-weight:800;font-size:15px;border:1px solid #fff;background:transparent;color:#fff}
+.btnSmall.edit{background:#4da6ff;border-color:#4da6ff}
+.btnSmall.del{background:#ff4d6b;border-color:#ff4d6b}
+.btnSmall.save{background:#2ee6a8;border-color:#2ee6a8;color:#111}
+.prog{height:10px;background:#333;border-radius:20px;overflow:hidden;margin:8px 0}
+.prog div{height:100%;background:#2ee6a8}
+.tabs{display:flex;gap:8px;margin:10px 0}
+.tab{flex:1;padding:10px;border-radius:20px;border:1px solid #fff;background:transparent;color:#fff;cursor:pointer;font-weight:700}
+.tab.active{background:#fff;color:#111}
+.miniGrid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.mini{aspect-ratio:1;border:2px solid #555;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:16px;font-weight:800;background:#1a1a30}
+.mini small{font-size:10px;font-weight:400;color:#aaa}
+.mini.ok{background:#1e7a4a;border-color:#2ee6a8}
+.mini.bad{background:#7a1e2e;border-color:#ff4d6b}
+.row{display:flex;gap:8px;align-items:center}
+.row input[type=checkbox]{width:22px;height:22px;flex-shrink:0}
+.row input[type=text]{flex:1}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:11px}
+.cal div{background:#1a1a30;border:1px solid #444;border-radius:8px;padding:8px 2px;min-height:38px}
+.cal .hd{background:#333;font-weight:800}
+.flexRow{display:flex;gap:8px}
+.hint{font-size:12px;color:#ddd;line-height:1.6}
+.editBar{background:rgba(77,166,255,.12);border:1px solid #4da6ff;border-radius:14px;padding:12px;margin:18px 0}
+#printArea{display:none}
+@media print{
+body{background:#fff;color:#000}
+.bg,.back,.btn,.btnPDF,.btnSmall,.tabs button,.editBar{display:none !important}
+.wrap{max-width:100%;padding:0}
+.page{display:none !important}
+.page.active{display:block !important}
+#printArea{display:block !important;color:#000}
+.inner{background:#fff;color:#000;border:1px solid #000}
+input,textarea,select{background:#fff;color:#000;border:1px solid #000}
+.card{background:#fff;color:#000;border:1px solid #000}
+}
+</style></head>
+<body><div class="bg"></div><div class="wrap">
+<div id="page-home" class="page active">
+<div class="top"><h1>المخطط الكامل</h1></div>
+<div id="grid" class="grid"></div>
+<button class="btnPDF" onclick="savePDF('all')">📤 مشاركة ملف - كل بياناتي</button>
+</div>
+<div id="page-section" class="page">
+<button class="back" onclick="goHome()">← رجوع للمربعات</button>
+<div id="sectionBox" class="inner"></div>
+<button class="back" onclick="goHome()" style="margin-top:12px;width:100%">← رجوع للمربعات</button>
+<button class="btnPDF" onclick="savePDF('section')">📤 مشاركة القسم كملف</button>
+</div>
+<div id="page-element" class="page">
+<button class="back" id="backToSection">← رجوع</button>
+<div id="elementBox" class="inner"></div>
+<button class="back" id="backToSection2" style="margin-top:12px;width:100%">← رجوع</button>
+<button class="btnPDF" onclick="savePDF('element')">📤 مشاركة العنصر كملف</button>
+</div>
+<div id="printArea"></div>
+</div>
+<script>
+const BOXES=[
+{icon:"☀️",c:"#ff5c7a",t:"المخطط اليومي",qs:["التاريخ:","ايه أهم 3 مهام اليوم؟","ايه ملاحظاتك؟"],steps:["اكتب أهم 3 مهام","اكتب مواعيدك من 4AM لـ 12AM","اكتب قائمة المهام الأخرى","آخر اليوم: اكتب ملاحظاتك"],plan:["الصبح: أهم 3 مهام","الظهر: راجع مواعيدك","بالليل: ملاحظات + جهز بكره"],extra:"day"},
+{icon:"🗓️",c:"#4da6ff",t:"المخطط الشهري",qs:["الشهر:","السنة:","ايه أهم 3 أهداف لهذا الشهر؟","ايه أهم المواعيد والأحداث؟"],steps:["اكتب الشهر والسنة","اكتب أهم 3 أهداف","اكتب أهم المواعيد","وزع الأهداف على الأسابيع"],plan:["أول الشهر: 3 أهداف","كل أسبوع: راجع هدف","آخر الشهر: قيم نفسك"],extra:"month"},
+{icon:"🔁",c:"#2ee6a8",t:"متتبع العادات",qs:["الشهر:","الهدف العام من هذه العادات:","ما الذي نجح؟ وما الذي يمكن تحسينه؟"],steps:["اكتب 8 عادات","لكل عادة: 3 صفحات × 30 يوم","علم كل يوم نفذت فيه","آخر الشهر: ملخص + ملاحظات"],plan:["كل يوم: علم على العادة","كل أسبوع: عد الأيام","آخر الشهر: ملخص"],extra:"habits"},
+{icon:"🎯",c:"#ff4d8d",t:"توزيع الأهداف",qs:["الهدف الأول؟","الهدف الثاني؟","الهدف الثالث؟","الهدف الرابع؟","الهدف الخامس؟"],steps:["اكتب 5 أهداف الشهر","وزعهم على 4 أسابيع","لكل أسبوع: 5 مهام + النتيجة المستهدفة"],plan:["الأسبوع 1: هدف 1","الأسبوع 2: هدف 2","الأسبوع 3: هدف 3","الأسبوع 4: هدف 4 + 5"],extra:"goals"},
+{icon:"🏆",c:"#ffb02e",t:"مراجعة نهاية الشهر",qs:["الشهر:","السنة:","ايه أهم الإنجازات اللي فخور بها؟","ما الذي لم ينجح؟","ما الذي تعلمته؟","ايه الخطوات القادمة؟","ملاحظة ختامية لنفسك"],steps:["قيم أهدافك بنسبة الإنجاز","قيم عاداتك","قيم التوازن: الصحة - العمل - العلاقات - التعلم - الروح - المال","اكتب الدروس","حدد الخطوات القادمة"],plan:["آخر يوم: مراجعة شاملة","احتفل بإنجازك","ابدأ شهر جديد"],extra:"monthReview"},
+{icon:"🔍",c:"#8a6cff",t:"المراجعة الأسبوعية",qs:["التاريخ:","ما الذي تعلمته؟ وكيف ستطبقه الأسبوع القادم؟","ما الذي ستركز عليه الأسبوع القادم؟"],steps:["اكتب أهم 5 إنجازات","اكتب ما سار بشكل جيد - 5","اكتب ما يحتاج تحسين - 5","اكتب أهم درس","حدد أولويات الأسبوع القادم"],plan:["كل جمعة: مراجعة 15 دقيقة","اكتب درس واحد","خطط للأسبوع الجاي"],extra:"weekReview"}
+];
+let curSection=0, curElement="", curHabit=1, curHabitPage=1;
+function getHabitMark(hi,pi,di){try{return localStorage.getItem("hab6_"+hi+"_"+pi+"_"+di)||""}catch(e){return ""}}
+function habitStats(hi){let ok=0,bad=0;for(let p=1;p<=3;p++)for(let d=1;d<=30;d++){let m=getHabitMark(hi,p,d);if(m=="ok")ok++;if(m=="bad")bad++}return{ok,bad,pct:Math.round(ok/90*100)}}
+function totalHabitStats(){let ok=0,bad=0;for(let hi=1;hi<=8;hi++){let s=habitStats(hi);ok+=s.ok;bad+=s.bad}return{ok,bad,pct:Math.round(ok/(8*90)*100)}}
+function show(p){["page-home","page-section","page-element"].forEach(id=>document.getElementById(id).classList.remove("active"));document.getElementById(p).classList.add("active");window.scrollTo(0,0)}
+function renderGrid(){let g=document.getElementById('grid');if(!g)return;g.innerHTML="";BOXES.forEach((b,i)=>{let d=document.createElement('div');d.className='card';let extra=i==2?`<div class="pct">✅ ${totalHabitStats().ok} | ❌ ${totalHabitStats().bad} | ${totalHabitStats().pct}%</div>`:"";d.innerHTML=`<span class="ic" style="color:${b.c}">${b.icon}</span><b>${b.t}</b>${extra}`;d.onclick=()=>openSection(i);g.appendChild(d)})}
+function goHome(){show("page-home");renderGrid()}
+function savePDF(mode){
+let html="<h1 style='text-align:center'>المخطط الكامل - بياناتي</h1><p style='text-align:center'>التاريخ: "+new Date().toLocaleDateString('ar-EG')+"</p><hr>";
+if(mode=="all"){
+BOXES.forEach((b,bi)=>{
+html+=`<h2>${b.icon} ${b.t}</h2>`;
+if(bi==2){for(let hi=1;hi<=8;hi++){let name=localStorage.getItem("habName6_"+hi)||("العادة "+hi);let goal=localStorage.getItem("habGoal6_"+hi)||"";let note=localStorage.getItem("habNote6_"+hi)||"";let s=habitStats(hi);html+=`<h3>🔁 ${name} - ✅ ${s.ok} | ❌ ${s.bad} | ${s.pct}%</h3><p><b>الهدف:</b> ${goal}</p><p><b>ملاحظات:</b> ${note}</p><p>صفحة 1: `;for(let d=1;d<=30;d++){let m=getHabitMark(hi,1,d);html+=(m=="ok"?"✅":m=="bad"?"❌":"○")+" "}html+=`</p><p>صفحة 2: `;for(let d=1;d<=30;d++){let m=getHabitMark(hi,2,d);html+=(m=="ok"?"✅":m=="bad"?"❌":"○")+" "}html+=`</p><p>صفحة 3: `;for(let d=1;d<=30;d++){let m=getHabitMark(hi,3,d);html+=(m=="ok"?"✅":m=="bad"?"❌":"○")+" "}html+=`</p><hr>`}}
+else{
+html+=`<p><b>مواعيد اليوم / أهداف / مهام:</b></p>`;
+for(let k=0;k<localStorage.length;k++){let key=localStorage.key(k);if(key.includes("box6_") && key.includes("_"+bi+"_")){let v=localStorage.getItem(key);if(v)html+=`<p>${key} : ${v}</p>`}}
+}
+});
+}
+else if(mode=="section"){
+let b=BOXES[curSection];html+=`<h2>${b.icon} ${b.t}</h2>`;
+if(b.extra=="habits"){for(let hi=1;hi<=8;hi++){let name=localStorage.getItem("habName6_"+hi)||("العادة "+hi);let s=habitStats(hi);html+=`<h3>${name} - ✅ ${s.ok} | ${s.pct}%</h3>`}}
+else{html+=boxText('sectionBox')}
+}
+else{html+=boxText('elementBox')}
+shareReport(html,mode);
+}
+function boxText(id){
+let c=document.getElementById(id).cloneNode(true);
+c.querySelectorAll('.editBar,button,.prog').forEach(e=>e.remove());
+c.querySelectorAll('input[type=checkbox]').forEach(e=>e.replaceWith((e.checked?'☑ ':'☐ ')));
+c.querySelectorAll('select').forEach(e=>e.replaceWith(e.value+' '));
+c.querySelectorAll('input,textarea').forEach(e=>{let sp=document.createElement('span');sp.textContent=(e.value||'-')+' ';e.replaceWith(sp)});
+c.querySelectorAll('.row').forEach(e=>e.after(document.createElement('br')));
+return '<div>'+c.innerHTML+'</div>';
+}
+async function shareReport(body,mode){
+const names={all:'المخطط-كل-البيانات',section:'المخطط-القسم',element:'المخطط-العنصر'};
+const fname=(names[mode]||'المخطط')+'-'+new Date().toISOString().slice(0,10)+'.html';
+const doc='<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+fname+'</title><style>body{font-family:Tahoma,sans-serif;color:#000;background:#fff;padding:16px;line-height:1.8}h1,h2,h3{margin:.6em 0 .3em}</style></head><body>'+body+'</body></html>';
+try{
+const file=new File([doc],fname,{type:'text/html'});
+if(navigator.canShare && navigator.canShare({files:[file]})){await navigator.share({files:[file],title:fname});return}
+const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=fname;document.body.appendChild(a);a.click();a.remove();
+}catch(e){if(e && /cancel|abort/i.test(String(e.message||e)))return;alert('تعذرت المشاركة: '+(e.message||e))}}
+function openSection(i){curSection=i;show("page-section");let b=BOXES[i];let html=`<h2><span class="title-ic" style="color:${b.c}">${b.icon}</span><span class="title-txt">${b.t}</span></h2>`;if(i==2){let s=totalHabitStats();html+=`<div class="prog"><div style="width:${s.pct}%"></div></div><p style="font-size:13px;text-align:center;margin:0 0 20px">✅ ${s.ok} | ❌ ${s.bad} | ${s.pct}% - من 720</p>`}html+=`<div class="grid">`;getElements(i).forEach(el=>{let subHtml="";if(el.id && el.id.startsWith("habit")){let hi=parseInt(el.id.replace("habit",""));let s=habitStats(hi);subHtml=`<small>✅ ${s.ok} | ${s.pct}%</small>`}html+=`<div class="card" onclick="openElement(${i},'${el.id}')"><span class="ic">${el.icon}</span><b>${el.title}</b>${subHtml}</div>`});html+=`</div>`;document.getElementById('sectionBox').innerHTML=html}
+function getElements(i){
+let b=BOXES[i];
+if(b.extra=="day")return[{id:"times",icon:"🕐",title:"مواعيد اليوم"},{id:"top3",icon:"✅",title:"أهم 3 مهام"},{id:"other",icon:"📋",title:"قائمة المهام الأخرى"},{id:"qs",icon:"❓",title:"الأسئلة"},{id:"steps",icon:"🪜",title:"الخطوات"},{id:"plan",icon:"📅",title:"الخطة"}];
+if(b.extra=="month")return[{id:"cal",icon:"📆",title:"التقويم الشهري"},{id:"goals3",icon:"🎯",title:"أهم 3 أهداف"},{id:"apps",icon:"📅",title:"أهم المواعيد"},{id:"qs",icon:"❓",title:"الأسئلة"},{id:"steps",icon:"🪜",title:"الخطوات"},{id:"plan",icon:"📅",title:"الخطة"}];
+if(b.extra=="habits"){let arr=[];for(let hi=1;hi<=8;hi++){let name=localStorage.getItem("habName6_"+hi)||("العادة "+hi);arr.push({id:"habit"+hi,icon:"🔁",title:name})}arr.push({id:"sum",icon:"📊",title:"ملخص العادات"},{id:"monthNote",icon:"📝",title:"ملاحظات الشهر"},{id:"qs",icon:"❓",title:"الأسئلة"},{id:"steps",icon:"🪜",title:"الخطوات"},{id:"plan",icon:"📅",title:"الخطة"});return arr}
+if(b.extra=="goals")return[{id:"week1",icon:"📅",title:"الأسبوع الأول"},{id:"week2",icon:"📅",title:"الأسبوع الثاني"},{id:"week3",icon:"📅",title:"الأسبوع الثالث"},{id:"week4",icon:"📅",title:"الأسبوع الرابع"},{id:"goalNote",icon:"📝",title:"ملاحظات عامة"},{id:"qs",icon:"❓",title:"الأسئلة"},{id:"steps",icon:"🪜",title:"الخطوات"},{id:"plan",icon:"📅",title:"الخطة"}];
+if(b.extra=="monthReview")return[{id:"mOk",icon:"⭐",title:"ما الذي نجح؟"},{id:"mBad",icon:"⚠️",title:"ما الذي لم ينجح؟"},{id:"mEval",icon:"🎯",title:"تقييم الأهداف"},{id:"mHabit",icon:"🔁",title:"تقييم العادات"},{id:"mBal",icon:"⚖️",title:"تقييم التوازن"},{id:"qs",icon:"❓",title:"الأسئلة"},{id:"steps",icon:"🪜",title:"الخطوات"},{id:"plan",icon:"📅",title:"الخطة"}];
+if(b.extra=="weekReview")return[{id:"wAch",icon:"🏆",title:"أهم إنجازات الأسبوع"},{id:"wGood",icon:"✅",title:"ما الذي سار بشكل جيد؟"},{id:"wBad",icon:"⚙️",title:"ما الذي يحتاج تحسين؟"},{id:"qs",icon:"❓",title:"الأسئلة"},{id:"steps",icon:"🪜",title:"الخطوات"},{id:"plan",icon:"📅",title:"الخطة"}];
+return[];
+}
+function field(key,ph){let v=(localStorage.getItem(key)||"").replace(/"/g,'');return `<textarea oninput="localStorage.setItem('${key}',this.value)" placeholder="${ph}">${v}</textarea>`}
+function input(key,ph){let v=(localStorage.getItem(key)||"").replace(/"/g,'');return `<input type="text" oninput="localStorage.setItem('${key}',this.value)" placeholder="${ph}" value="${v}">`}
+function editBar(sectionIdx,elementId,title){return `<div class="editBar"><div class="flexRow"><button class="btnSmall edit" onclick="editThisElement(${sectionIdx},'${elementId}')">التعديل</button><button class="btnSmall del" onclick="deleteThisElement(${sectionIdx},'${elementId}')">الحذف</button></div></div>`}
+function editThisElement(sectionIdx,elementId){document.querySelector('#elementBox input, #elementBox textarea')?.focus()}
+function deleteThisElement(sectionIdx,elementId){let b=BOXES[sectionIdx];if(!confirm('تحذف بيانات العنصر ده بس؟'))return;if(elementId=="times"){for(let ti=0;ti<21;ti++)localStorage.removeItem("box6_day_"+sectionIdx+"_"+ti)}if(elementId=="top3"){for(let k=1;k<=3;k++){localStorage.removeItem("box6_daytask_"+sectionIdx+"_"+k);localStorage.removeItem("box6_daychk_"+sectionIdx+"_"+k)}}if(elementId=="other"){for(let k=1;k<=8;k++){localStorage.removeItem("box6_othertask_"+sectionIdx+"_"+k);localStorage.removeItem("box6_otherchk_"+sectionIdx+"_"+k)}}if(elementId=="goals3"){for(let k=1;k<=3;k++)localStorage.removeItem("box6_monthgoal_"+sectionIdx+"_"+k)}if(elementId=="apps"){for(let k=1;k<=8;k++){localStorage.removeItem("box6_monthapp_"+sectionIdx+"_"+k);localStorage.removeItem("box6_monthappchk_"+sectionIdx+"_"+k)}}if(elementId.startsWith("week")){let w=parseInt(elementId.replace("week",""));for(let k=1;k<=5;k++)localStorage.removeItem("box6_goal_"+sectionIdx+"_w"+w+"_"+k);localStorage.removeItem("box6_goalres_"+sectionIdx+"_w"+w)}if(elementId=="goalNote")localStorage.removeItem("box6_goalnote_"+sectionIdx);if(elementId=="mOk"){for(let k=1;k<=5;k++)localStorage.removeItem("box6_mrev_ok_"+sectionIdx+"_"+k)}if(elementId=="mBad"){for(let k=1;k<=5;k++)localStorage.removeItem("box6_mrev_bad_"+sectionIdx+"_"+k)}if(elementId=="mEval"){for(let k=1;k<=5;k++){localStorage.removeItem("box6_mrev_goal_"+sectionIdx+"_"+k);localStorage.removeItem("box6_mrev_pct_"+sectionIdx+"_"+k);localStorage.removeItem("box6_mrev_res_"+sectionIdx+"_"+k)}}if(elementId=="mHabit"){for(let k=1;k<=5;k++){localStorage.removeItem("box6_mrev_habit_"+sectionIdx+"_"+k);localStorage.removeItem("box6_mrev_habitrate_"+sectionIdx+"_"+k)}}if(elementId=="mBal"){for(let ti=0;ti<6;ti++)localStorage.removeItem("box6_mrev_bal_"+sectionIdx+"_"+ti)}if(elementId=="wAch"){for(let k=1;k<=5;k++)localStorage.removeItem("box6_wrev_ach_"+sectionIdx+"_"+k)}if(elementId=="wGood"){for(let k=1;k<=5;k++)localStorage.removeItem("box6_wrev_good_"+sectionIdx+"_"+k)}if(elementId=="wBad"){for(let k=1;k<=5;k++)localStorage.removeItem("box6_wrev_bad_"+sectionIdx+"_"+k)}if(elementId=="sum"){for(let k=1;k<=5;k++){localStorage.removeItem("habSum6_"+sectionIdx+"_"+k);localStorage.removeItem("habSumDay6_"+sectionIdx+"_"+k)}}if(elementId=="monthNote")localStorage.removeItem("habMonth6_"+sectionIdx);if(elementId=="qs"){b.qs.forEach((q,qi)=>localStorage.removeItem("box6_ans_"+sectionIdx+"q"+qi))}if(elementId.startsWith("habit")){let hi=parseInt(elementId.replace("habit",""));localStorage.removeItem("habName6_"+hi);localStorage.removeItem("habGoal6_"+hi);localStorage.removeItem("habNote6_"+hi);for(let p=1;p<=3;p++)for(let d=1;d<=30;d++)localStorage.removeItem("hab6_"+hi+"_"+p+"_"+d)}openElement(sectionIdx,elementId);renderGrid();alert('اتحذفت بيانات العنصر ده بس ✅')}
+function openElement(sectionIdx,elementId){curSection=sectionIdx;curElement=elementId;show("page-element");let b=BOXES[sectionIdx];let title="";let body="";let backLabel="← رجوع لـ "+b.t;document.getElementById('backToSection').innerText=backLabel;document.getElementById('backToSection').onclick=()=>openSection(sectionIdx);document.getElementById('backToSection2').innerText=backLabel;document.getElementById('backToSection2').onclick=()=>openSection(sectionIdx);if(elementId=="times"){title="🕐 مواعيد اليوم";["4:00 AM","5:00 AM","6:00 AM","7:00 AM","8:00 AM","9:00 AM","10:00 AM","11:00 AM","12:00 PM","1:00 PM","2:00 PM","3:00 PM","4:00 PM","5:00 PM","6:00 PM","7:00 PM","8:00 PM","9:00 PM","10:00 PM","11:00 PM","12:00 AM"].forEach((t,ti)=>{body+=`<div class="row"><b style="width:75px">${t}</b>${input("box6_day_"+sectionIdx+"_"+ti,"موعدك...")}</div>`})}if(elementId=="top3"){title="✅ أهم 3 مهام اليوم";for(let k=1;k<=3;k++)body+=`<div class="row"><input type="checkbox" onchange="localStorage.setItem('box6_daychk_${sectionIdx}_${k}',this.checked?1:0)" ${localStorage.getItem("box6_daychk_"+sectionIdx+"_"+k)=="1"?"checked":""}>${input("box6_daytask_"+sectionIdx+"_"+k,"المهمة "+k)}</div>`}if(elementId=="other"){title="📋 قائمة المهام الأخرى";for(let k=1;k<=8;k++)body+=`<div class="row"><input type="checkbox" onchange="localStorage.setItem('box6_otherchk_${sectionIdx}_${k}',this.checked?1:0)" ${localStorage.getItem("box6_otherchk_"+sectionIdx+"_"+k)=="1"?"checked":""}>${input("box6_othertask_"+sectionIdx+"_"+k,"مهمة أخرى "+k)}</div>`}if(elementId=="cal"){title="📆 التقويم الشهري";body=`<div class="cal"><div class="hd">السبت</div><div class="hd">الأحد</div><div class="hd">الاثنين</div><div class="hd">الثلاثاء</div><div class="hd">الأربعاء</div><div class="hd">الخميس</div><div class="hd">الجمعة</div>`;for(let d=1;d<=35;d++)body+=`<div>${d<=31?d:""}</div>`;body+=`</div>`}if(elementId=="goals3"){title="🎯 أهم 3 أهداف";for(let k=1;k<=3;k++)body+=`<b>هدف ${k}</b>${field("box6_monthgoal_"+sectionIdx+"_"+k,"اكتب هدف "+k)}`}if(elementId=="apps"){title="📅 أهم المواعيد والأحداث";for(let k=1;k<=8;k++)body+=`<div class="row"><input type="checkbox" onchange="localStorage.setItem('box6_monthappchk_${sectionIdx}_${k}',this.checked?1:0)" ${localStorage.getItem("box6_monthappchk_"+sectionIdx+"_"+k)=="1"?"checked":""}>${input("box6_monthapp_"+sectionIdx+"_"+k,"ميعاد / حدث "+k)}</div>`}if(elementId.startsWith("week") && b.extra=="goals"){let w=parseInt(elementId.replace("week",""));title=`📅 الأسبوع ${w==1?"الأول":w==2?"الثاني":w==3?"الثالث":"الرابع"}`;for(let k=1;k<=5;k++)body+=`${input("box6_goal_"+sectionIdx+"_w"+w+"_"+k,"مهمة "+k)}`;body+=`<b>النتيجة المستهدفة بنهاية الأسبوع</b>${field("box6_goalres_"+sectionIdx+"_w"+w,"النتيجة المستهدفة...")}`}if(elementId=="goalNote"){title="📝 ملاحظات عامة";body=field("box6_goalnote_"+sectionIdx,"هل تحتاج تعديل في توزيع الأهداف؟")}if(elementId=="mOk"){title="⭐ ما الذي نجح؟";for(let k=1;k<=5;k++)body+=`${input("box6_mrev_ok_"+sectionIdx+"_"+k,"إنجاز "+k)}`}if(elementId=="mBad"){title="⚠️ ما الذي لم ينجح؟";for(let k=1;k<=5;k++)body+=`${input("box6_mrev_bad_"+sectionIdx+"_"+k,"تحدي "+k)}`}if(elementId=="mEval"){title="🎯 تقييم الأهداف";for(let k=1;k<=5;k++)body+=`<div class="row">${input("box6_mrev_goal_"+sectionIdx+"_"+k,"الهدف "+k)}${input("box6_mrev_pct_"+sectionIdx+"_"+k,"%")}${input("box6_mrev_res_"+sectionIdx+"_"+k,"النتيجة")}</div>`}if(elementId=="mHabit"){title="🔁 تقييم العادات اليومية";for(let k=1;k<=5;k++)body+=`<div class="row">${input("box6_mrev_habit_"+sectionIdx+"_"+k,"العادة")}<select onchange="localStorage.setItem('box6_mrev_habitrate_${sectionIdx}_${k}',this.value)"><option value="">التقييم</option><option ${localStorage.getItem("box6_mrev_habitrate_"+sectionIdx+"_"+k)=="دائما"?"selected":""}>دائما</option><option ${localStorage.getItem("box6_mrev_habitrate_"+sectionIdx+"_"+k)=="أحيانا"?"selected":""}>أحيانا</option><option ${localStorage.getItem("box6_mrev_habitrate_"+sectionIdx+"_"+k)=="نادرا"?"selected":""}>نادرا</option></select></div>`}if(elementId=="mBal"){title="⚖️ تقييم التوازن في حياتك";["الصحة","العمل","العلاقات","التعلم","الروح","المال"].forEach((t,ti)=>{body+=`<b>${t}</b>${input("box6_mrev_bal_"+sectionIdx+"_"+ti,"من 1 لـ 5")}`})}if(elementId=="wAch"){title="🏆 أهم إنجازات الأسبوع";for(let k=1;k<=5;k++)body+=`${input("box6_wrev_ach_"+sectionIdx+"_"+k,"إنجاز "+k)}`}if(elementId=="wGood"){title="✅ ما الذي سار بشكل جيد؟";for(let k=1;k<=5;k++)body+=`${input("box6_wrev_good_"+sectionIdx+"_"+k,"ما الذي كان مميزا؟ "+k)}`}if(elementId=="wBad"){title="⚙️ ما الذي يحتاج إلى تحسين؟";for(let k=1;k<=5;k++)body+=`${input("box6_wrev_bad_"+sectionIdx+"_"+k,"تحدي "+k)}`}if(elementId=="sum"){title="📊 ملخص العادات";for(let k=1;k<=5;k++)body+=`<div class="row">${input("habSum6_"+sectionIdx+"_"+k,"العادة")}${input("habSumDay6_"+sectionIdx+"_"+k,"عدد الأيام")}</div>`}if(elementId=="monthNote"){title="📝 ملاحظات الشهر";body=field("habMonth6_"+sectionIdx,"ما الذي نجح؟ وما الذي يمكن تحسينه؟")}if(elementId=="qs"){title="❓ الأسئلة";b.qs.forEach((q,qi)=>{let k="box6_ans_"+sectionIdx+"q"+qi;body+=`<b>${qi+1}. ${q}</b>${field(k,"اكتب إجابتك...")}`})}if(elementId=="steps"){title="🪜 الخطوات";b.steps.forEach(s=>body+=`<div class="step">${s}</div>`)}if(elementId=="plan"){title="📅 الخطة";b.plan.forEach(p=>body+=`<div class="step">${p}</div>`)}if(elementId.startsWith("habit") && b.extra=="habits"){let hi=parseInt(elementId.replace("habit",""));curHabit=hi;let hName=localStorage.getItem("habName6_"+hi)||("العادة "+hi);let hs=habitStats(hi);title=`🔁 ${hName} - ✅ ${hs.ok} | ${hs.pct}%`;body+=`<p style="font-size:13px;text-align:center;margin:0 0 20px">✅ ${hs.ok} | ❌ ${hs.bad} | ${hs.pct}%</p><div class="grid">`;body+=`<div class="card" onclick="openHabitSub(${sectionIdx},${hi},'name')"><span class="ic">✏️</span><b>مربع اسم العادة</b><small>${localStorage.getItem("habName6_"+hi)||"لسه مكتبتش اسم"}</small></div>`;body+=`<div class="card" onclick="openHabitSub(${sectionIdx},${hi},'goal')"><span class="ic">🎯</span><b>مربع الهدف الشهري</b><small>${localStorage.getItem("habGoal6_"+hi)||"لسه مكتبتش هدف"}</small></div>`;body+=`<div class="card" onclick="openHabitSub(${sectionIdx},${hi},'note')"><span class="ic">📝</span><b>مربع ملاحظات العادة</b></div>`;body+=`<div class="card" onclick="openHabitSub(${sectionIdx},${hi},'pages')"><span class="ic">🏆</span><b>مربع الصفحات</b><small>3 صفحات × 30 مربع</small></div>`;body+=`</div>`}let isFixed = (elementId=="steps"||elementId=="plan"||elementId=="cal");let bar = isFixed ? "" : editBar(sectionIdx,elementId,title);document.getElementById('elementBox').innerHTML=`<h2><span class="title-txt">${title}</span></h2>${bar}${body}<button class="btn" onclick="openSection(${sectionIdx})">💾 حفظ ورجوع</button>`}
+function openHabitSub(sectionIdx,hi,sub){curSection=sectionIdx;curElement="habit"+hi;show("page-element");let backLabel="← رجوع لـ العادة "+(localStorage.getItem("habName6_"+hi)||hi);document.getElementById('backToSection').innerText=backLabel;document.getElementById('backToSection').onclick=()=>openElement(sectionIdx,"habit"+hi);document.getElementById('backToSection2').innerText=backLabel;document.getElementById('backToSection2').onclick=()=>openElement(sectionIdx,"habit"+hi);let title="",body="",bar="";if(sub=="name"){title="✏️ مربع اسم العادة - العادة "+hi;let v=localStorage.getItem("habName6_"+hi)||"";bar=`<div class="editBar"><div class="flexRow"><button class="btnSmall edit" onclick="document.getElementById('habNameInput').focus()">التعديل</button><button class="btnSmall del" onclick="deleteHabitName(${hi},${sectionIdx})">الحذف</button></div></div>`;body=`<input type="text" id="habNameInput" value="${v.replace(/"/g,'')}" placeholder="اكتب اسم العادة..."><button class="btnSmall save" style="width:100%" onclick="saveHabitName(${hi},${sectionIdx})">💾 حفظ الاسم ده</button>`}if(sub=="goal"){title="🎯 مربع الهدف الشهري - العادة "+hi;let v=localStorage.getItem("habGoal6_"+hi)||"";bar=`<div class="editBar"><div class="flexRow"><button class="btnSmall edit" onclick="document.getElementById('habGoalInput').focus()">التعديل</button><button class="btnSmall del" onclick="deleteHabitGoal(${hi},${sectionIdx})">الحذف</button></div></div>`;body=`<input type="text" id="habGoalInput" value="${v.replace(/"/g,'')}" placeholder="كام مرة في الشهر؟"><button class="btnSmall save" style="width:100%" onclick="saveHabitGoal(${hi},${sectionIdx})">💾 حفظ الهدف ده</button>`}if(sub=="note"){title="📝 مربع ملاحظات العادة - العادة "+hi;let v=localStorage.getItem("habNote6_"+hi)||"";bar=`<div class="editBar"><div class="flexRow"><button class="btnSmall edit" onclick="document.getElementById('habNoteInput').focus()">التعديل</button><button class="btnSmall del" onclick="deleteHabitNote(${hi},${sectionIdx})">الحذف</button></div></div>`;body=`<textarea id="habNoteInput" placeholder="ملاحظات العادة...">${v}</textarea><button class="btnSmall save" style="width:100%" onclick="saveHabitNote(${hi},${sectionIdx})">💾 حفظ الملاحظات دي</button>`}if(sub=="pages"){let hs=habitStats(hi);title=`🏆 مربع الصفحات - ${localStorage.getItem("habName6_"+hi)||("العادة "+hi)}`;bar=`<div class="editBar"><div class="flexRow"><button class="btnSmall del" onclick="clearHabitPage(${hi},curHabitPage,${sectionIdx})">الحذف</button></div></div>`;body=`<p style="font-size:13px;text-align:center;margin:0 0 8px">✅ ${hs.ok} | ❌ ${hs.bad} | ${hs.pct}%</p><p class="hint" style="text-align:center">دوس على المربع الصغير: فاضي → ✅ صح → ❌ غلط → فاضي</p><div class="tabs"><button class="tab ${curHabitPage==1?'active':''}" onclick="curHabitPage=1;openHabitSub(${sectionIdx},${hi},'pages')">صفحة 1<br><small>يوم 1-30</small></button><button class="tab ${curHabitPage==2?'active':''}" onclick="curHabitPage=2;openHabitSub(${sectionIdx},${hi},'pages')">صفحة 2<br><small>يوم 31-60</small></button><button class="tab ${curHabitPage==3?'active':''}" onclick="curHabitPage=3;openHabitSub(${sectionIdx},${hi},'pages')">صفحة 3<br><small>يوم 61-90</small></button></div><div class="miniGrid">`;for(let d=1;d<=30;d++){let m=getHabitMark(hi,curHabitPage,d);let cls=m=="ok"?"ok":m=="bad"?"bad":"";let sym=m=="ok"?"✅":m=="bad"?"❌":"○";let global=(curHabitPage-1)*30+d;body+=`<div class="mini ${cls}" onclick="cycleHabitMarkFromPages(${hi},${curHabitPage},${d},${sectionIdx})"><span>${sym}</span><small>يوم ${global}</small></div>`}body+=`</div>`}document.getElementById('elementBox').innerHTML=`<h2><span class="title-txt">${title}</span></h2>${bar}${body}<button class="btn" onclick="openElement(${sectionIdx},'habit${hi}')">💾 حفظ ورجوع للعادة</button>`}
+function cycleHabitMarkFromPages(hi,pi,di,sectionIdx){let cur=getHabitMark(hi,pi,di);let nxt=cur==""?"ok":cur=="ok"?"bad":"";if(nxt=="")localStorage.removeItem("hab6_"+hi+"_"+pi+"_"+di);else localStorage.setItem("hab6_"+hi+"_"+pi+"_"+di,nxt);openHabitSub(sectionIdx,hi,'pages')}
+function saveHabitName(hi,sectionIdx){localStorage.setItem("habName6_"+hi,document.getElementById('habNameInput').value);alert('اتحفظ اسم العادة دي بس ✅');openElement(sectionIdx,"habit"+hi)}
+function saveHabitGoal(hi,sectionIdx){localStorage.setItem("habGoal6_"+hi,document.getElementById('habGoalInput').value);alert('اتحفظ هدف العادة دي بس ✅');openElement(sectionIdx,"habit"+hi)}
+function saveHabitNote(hi,sectionIdx){localStorage.setItem("habNote6_"+hi,document.getElementById('habNoteInput').value);alert('اتحفظت ملاحظات العادة دي بس ✅');openElement(sectionIdx,"habit"+hi)}
+function deleteHabitName(hi,sectionIdx){if(!confirm('تحذف اسم العادة دي بس؟'))return;localStorage.removeItem("habName6_"+hi);openElement(sectionIdx,"habit"+hi)}
+function deleteHabitGoal(hi,sectionIdx){if(!confirm('تحذف هدف العادة دي بس؟'))return;localStorage.removeItem("habGoal6_"+hi);openElement(sectionIdx,"habit"+hi)}
+function deleteHabitNote(hi,sectionIdx){if(!confirm('تحذف ملاحظات العادة دي بس؟'))return;localStorage.removeItem("habNote6_"+hi);openElement(sectionIdx,"habit"+hi)}
+function clearHabitPage(hi,hp,sectionIdx){if(!confirm('تحذف علامات الصفحة دي بس؟'))return;for(let d=1;d<=30;d++)localStorage.removeItem("hab6_"+hi+"_"+hp+"_"+d);openHabitSub(sectionIdx,hi,'pages')}
+renderGrid();
+</script>
+</body></html>

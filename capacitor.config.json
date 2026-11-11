@@ -1,0 +1,8 @@
+{
+  "appId": "com.mukhatat.planner",
+  "appName": "المخطط",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false
+  }
+}

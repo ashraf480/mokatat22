@@ -1,0 +1,11 @@
+{
+  "name": "mukhatat",
+  "version": "1.0.0",
+  "private": true,
+  "description": "المخطط - تطبيق تخطيط يومي وشهري",
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/cli": "^6.1.2",
+    "@capacitor/core": "^6.1.2"
+  }
+}
